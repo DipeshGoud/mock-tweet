@@ -1,11 +1,12 @@
-import { useRef } from 'react'
-import { Download, Sparkles } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Download } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useTweetData, useTweetInteractions } from '../../hooks/useTweetData'
 import { downloadTweetImage } from '../../utils/imageUtils'
 import TweetCard from './TweetCard'
 import TweetEditor from './TweetEditor'
 import ThemeToggle from '../ui/ThemeToggle'
+import logoPng from '../../assets/logo.png'
 
 function TweetGenerator() {
   const { isDark } = useTheme()
@@ -13,21 +14,28 @@ function TweetGenerator() {
   const { liked, retweeted, handleLike, handleRetweet } = useTweetInteractions(tweetData, setTweetData)
   const mobileTweetRef = useRef(null)
   const desktopTweetRef = useRef(null)
+  const [previewTheme, setPreviewTheme] = useState('system') // 'system', 'light', or 'dark'
 
-  const handleDownload = async () => {
-    const elementToCapture = (desktopTweetRef.current && desktopTweetRef.current.offsetParent !== null)
-      ? desktopTweetRef.current
-      : mobileTweetRef.current;
+  const handleDownload = async (theme = 'system') => {
+    // Update preview theme before capturing
+    setPreviewTheme(theme);
+    
+    // Small delay to ensure the theme change is applied
+    setTimeout(async () => {
+      const elementToCapture = (desktopTweetRef.current && desktopTweetRef.current.offsetParent !== null)
+        ? desktopTweetRef.current
+        : mobileTweetRef.current;
 
-    if (elementToCapture) {
-      await downloadTweetImage(elementToCapture, tweetData.handle);
-    } else {
-      console.error("No tweet card element found to capture.");
-    }
+      if (elementToCapture) {
+        await downloadTweetImage(elementToCapture, tweetData.handle);
+      } else {
+        console.error("No tweet card element found to capture.");
+      }
+    }, 100);
   }
 
   return (
-    <div className={`min-h-screen w-full ${isDark ? 'bg-black' : 'bg-white'} transition-all duration-500`}>
+    <div className={`min-h-screen w-full ${isDark ? 'bg-gray-900' : 'bg-gray-50'} transition-all duration-500`}>
       {/* Grid Background Pattern */}
       <div className={`fixed inset-0 w-full h-full ${isDark ? 'opacity-10' : 'opacity-5'}`} style={{
         backgroundImage: `
@@ -43,11 +51,11 @@ function TweetGenerator() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl ${isDark ? 'bg-gradient-to-r from-gray-600 to-black' : 'bg-gradient-to-r from-gray-400 to-black'} shadow-lg`}>
-                <Sparkles className="w-6 h-6 text-white" />
+              <div className={`p-2 rounded-xl`}>
+                <img src={logoPng} alt="TweetGen Logo" className="w-12 h-12" />
               </div>
               <div>
-                <h1 className={`${isDark ? 'text-white' : 'text-black'} text-2xl lg:text-4xl font-bold bg-gradient-to-r ${isDark ? 'from-gray-400 to-white' : 'from-gray-600 to-black'} bg-clip-text text-transparent`}>
+                <h1 className={`${isDark ? 'text-white' : 'text-black'} text-2xl lg:text-4xl font-bold bg-gradient-to-r ${isDark ? 'from-blue-300 to-white' : 'from-blue-600 to-blue-800'} bg-clip-text text-transparent`}>
                   Mock Tweet Generator
                 </h1>
                 <p className={`${isDark ? 'text-white/80' : 'text-black/80'} text-sm lg:text-base mt-2`}>
@@ -90,6 +98,7 @@ function TweetGenerator() {
                   retweeted={retweeted}
                   onLike={handleLike}
                   onRetweet={handleRetweet}
+                  forcedTheme={previewTheme}
                 />
               </div>
             </div>
@@ -98,6 +107,7 @@ function TweetGenerator() {
                 tweetData={tweetData}
                 setTweetData={setTweetData}
                 onDownload={handleDownload}
+                onThemeChange={setPreviewTheme}
               />
             </div>
           </div>
@@ -121,12 +131,13 @@ function TweetGenerator() {
                        <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-black'}`}>Live Preview</span>
                      </div>
                     <TweetCard 
-                    ref={desktopTweetRef}
+                      ref={desktopTweetRef}
                       tweetData={tweetData}
                       liked={liked}
                       retweeted={retweeted}
                       onLike={handleLike}
                       onRetweet={handleRetweet}
+                      forcedTheme={previewTheme}
                     />
                   </div>
                 </div>
@@ -140,14 +151,15 @@ function TweetGenerator() {
                   tweetData={tweetData}
                   setTweetData={setTweetData}
                   onDownload={handleDownload}
+                  onThemeChange={setPreviewTheme}
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  )
+      </div>
+    )
 }
 
 export default TweetGenerator

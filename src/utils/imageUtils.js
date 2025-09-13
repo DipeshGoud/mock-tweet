@@ -2,6 +2,7 @@
  * Downloads a tweet as an image
  * @param {HTMLElement} element - The tweet element to capture
  * @param {string} handle - The tweet handle for filename
+ * @param {string} theme - The theme of the tweet (system, light, dark)
  * @returns {Promise<void>}
  */
 export const downloadTweetImage = async (element, handle) => {

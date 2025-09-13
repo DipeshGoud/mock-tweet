@@ -1,44 +1,70 @@
-/* Override TailwindCSS 4 color formats for export compatibility */
+/* Logo-inspired color theme */
 
 :root {
-  /* Gray colors - simplified to black and white */
-  --gray-50: #ffffff;
-  --gray-100: #ffffff;
-  --gray-200: #ffffff;
-  --gray-300: #cccccc;
-  --gray-400: #999999;
-  --gray-500: #666666;
-  --gray-600: #333333;
-  --gray-700: #000000;
-  --gray-800: #000000;
-  --gray-900: #000000;
-  --gray-950: #000000;
+  /* Primary brand colors inspired by logo */
+  --brand-primary: #1e40af;
+  --brand-secondary: #3b82f6;
+  --brand-accent: #60a5fa;
+  --brand-light: #dbeafe;
+  --brand-dark: #1e3a8a;
 
-  /* Blue colors - converted to grayscale */
-  --blue-100: #ffffff;
-  --blue-400: #666666;
-  --blue-500: #333333;
-  --blue-600: #000000;
-  --blue-700: #000000;
-  --blue-900: #000000;
+  /* Gray colors - professional palette */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --gray-950: #020617;
 
-  /* Red colors - converted to grayscale */
-  --red-100: #ffffff;
-  --red-500: #333333;
-  --red-600: #000000;
-  --red-700: #000000;
-  --red-900: #000000;
+  /* Blue colors - improved contrast theme */
+--blue-50: #f0f9ff;
+--blue-100: #dbeafe;
+--blue-200: #bfdbfe;
+--blue-300: #93c5fd;
+--blue-400: #60a5fa;
+--blue-500: #3b82f6;
+--blue-600: #2563eb;
+--blue-700: #1d4ed8;
+--blue-800: #1e40af;
+--blue-900: #1e3a8a;
+--blue-950: #172554;
 
-  /* Green colors - converted to grayscale */
-  --green-100: #ffffff;
-  --green-400: #666666;
-  --green-600: #333333;
-  --green-700: #000000;
-  --green-900: #000000;
+  /* Supporting colors */
+  --red-100: #fee2e2;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+  --red-900: #7f1d1d;
 
-  /* Purple colors - converted to grayscale */
-  --purple-500: #333333;
+  --green-100: #dcfce7;
+  --green-400: #4ade80;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-900: #14532d;
+
+  --purple-500: #8b5cf6;
+  --indigo-600: #4f46e5;
 }
+
+/* Apply brand colors */
+.bg-brand-primary { background-color: var(--brand-primary) !important; }
+.bg-brand-secondary { background-color: var(--brand-secondary) !important; }
+.bg-brand-accent { background-color: var(--brand-accent) !important; }
+.bg-brand-light { background-color: var(--brand-light) !important; }
+.bg-brand-dark { background-color: var(--brand-dark) !important; }
+
+.text-brand-primary { color: var(--brand-primary) !important; }
+.text-brand-secondary { color: var(--brand-secondary) !important; }
+.text-brand-accent { color: var(--brand-accent) !important; }
+.text-brand-dark { color: var(--brand-dark) !important; }
+
+.border-brand-primary { border-color: var(--brand-primary) !important; }
+.border-brand-secondary { border-color: var(--brand-secondary) !important; }
 
 /* Apply standard colors */
 .bg-gray-50 { background-color: var(--gray-50) !important; }
@@ -47,7 +73,20 @@
 .bg-gray-300 { background-color: var(--gray-300) !important; }
 .bg-gray-600 { background-color: var(--gray-600) !important; }
 .bg-gray-700 { background-color: var(--gray-700) !important; }
+.bg-gray-800 { background-color: var(--gray-800) !important; }
+.bg-gray-900 { background-color: var(--gray-900) !important; }
 .bg-black { background-color: #000000 !important; }
+
+.text-gray-600 { color: var(--gray-600) !important; }
+.text-gray-700 { color: var(--gray-700) !important; }
+.text-gray-800 { color: var(--gray-800) !important; }
+.text-gray-900 { color: var(--gray-900) !important; }
+
+.bg-blue-500 { background-color: var(--blue-500) !important; }
+.bg-blue-600 { background-color: var(--blue-600) !important; }
+.bg-blue-700 { background-color: var(--blue-700) !important; }
+.text-blue-600 { color: var(--blue-600) !important; }
+.border-blue-500 { border-color: var(--blue-500) !important; }
 .bg-white { background-color: #ffffff !important; }
 
 .bg-blue-100 { background-color: var(--blue-100) !important; }

@@ -1,14 +1,15 @@
 import { useRef, useState } from 'react'
-import { Camera, Upload, Download, Sparkles, Image as ImageIcon, Video } from 'lucide-react'
+import { Upload, Image as ImageIcon, Video, Download, Sun, Moon } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { handleFileUpload, handleMediaUpload } from '../../utils/imageUtils'
 
-function TweetEditor({ tweetData, setTweetData, onDownload }) {
+function TweetEditor({ tweetData, setTweetData, onDownload, onThemeChange }) {
   const { isDark } = useTheme()
   const fileInputRef = useRef(null)
   const mediaInputRef = useRef(null)
   const [dragActive, setDragActive] = useState(false)
-  const [dragType, setDragType] = useState(null) // 'profile' or 'media'
+  const [dragType, setDragType] = useState(null)
+  const [tweetTheme, setTweetTheme] = useState('system')
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0]
@@ -61,70 +62,54 @@ function TweetEditor({ tweetData, setTweetData, onDownload }) {
   }
 
   return (
-    <div className={`p-6 lg:p-8 rounded-2xl ${isDark ? 'bg-black/40' : 'bg-white/80'} backdrop-blur-sm border ${isDark ? 'border-gray-600/30' : 'border-gray-300/30'} shadow-xl transition-all duration-300`}>
-      <div className="flex items-center gap-3 mb-6 lg:mb-8">
-        <div className={`p-2 rounded-xl ${isDark ? 'bg-gradient-to-r from-gray-700 to-black' : 'bg-gradient-to-r from-gray-300 to-gray-600'} shadow-lg`}>
-          <Sparkles className="w-5 h-5 text-white" />
-        </div>
-        <h2 className={`${isDark ? 'text-white' : 'text-black'} text-xl lg:text-2xl font-bold bg-gradient-to-r ${isDark ? 'from-gray-400 to-white' : 'from-gray-600 to-black'} bg-clip-text text-transparent`}>
-          Customize Your Tweet
-        </h2>
+    <div className={`p-4 md:p-6 rounded-lg ${isDark ? 'bg-gray-900' : 'bg-white'} border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+      {/* Header */}
+      <div className="mb-6">
+        <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Tweet Editor</h2>
+        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Customize your tweet</p>
       </div>
       
-      <div className="space-y-6 lg:space-y-8">
-        {/* Profile Photo Section */}
-        <div className="space-y-4">
-          <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold mb-3`}>Profile Photo</label>
-          <div className="flex flex-col sm:flex-row items-start gap-4">
-            <div className={`w-20 h-20 lg:w-24 lg:h-24 rounded-full ${isDark ? 'bg-black/50' : 'bg-white'} flex items-center justify-center overflow-hidden border-2 ${isDark ? 'border-gray-600/50' : 'border-gray-300/30'} shadow-lg`}>
-               {tweetData.profileImage ? (
-                 <img src={tweetData.profileImage} alt="Profile" className="w-full h-full object-cover" />
-               ) : (
-                 <Camera className={`w-8 h-8 lg:w-10 lg:h-10 ${isDark ? 'text-white' : 'text-black'}`} />
-               )}
-             </div>
-            
-            {/* Drag and Drop Area */}
-            <div 
-              className={`flex-1 min-h-[120px] border-2 border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer ${
-                dragActive && dragType === 'profile'
-                  ? (isDark ? 'border-gray-400 bg-gray-400/10' : 'border-gray-600 bg-gray-600/10')
-                  : (isDark ? 'border-gray-600 hover:border-gray-400 bg-black/30' : 'border-gray-300/50 hover:border-gray-600 bg-white/50')
-              }`}
-              onDragEnter={(e) => handleDrag(e, 'profile')}
-              onDragLeave={(e) => handleDrag(e, 'profile')}
-              onDragOver={(e) => handleDrag(e, 'profile')}
-              onDrop={(e) => handleDrop(e, 'profile')}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="flex flex-col items-center justify-center text-center space-y-3">
-                <div className={`p-3 rounded-full ${isDark ? 'bg-black' : 'bg-white border border-gray-300'}`}>
-                  <Upload className={`w-6 h-6 ${isDark ? 'text-white' : 'text-black'}`} />
-                </div>
-                <div>
-                  <p className={`${isDark ? 'text-white' : 'text-black'} font-medium`}>
-                    Drop your profile photo here
-                  </p>
-                  <p className={`${isDark ? 'text-white/60' : 'text-black/60'} text-sm mt-1`}>
-                    or click to browse files
-                  </p>
+      <div className="space-y-6">
+        {/* Profile & User Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Profile Photo */}
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+              Profile Photo
+            </label>
+            {tweetData.profileImage ? (
+              <div className={`relative p-3 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-50'} border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                <div className="flex items-center gap-3">
+                  <img src={tweetData.profileImage} alt="Profile" className="w-12 h-12 rounded-full object-cover" />
+                  <div className="flex-1">
+                    <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Profile uploaded</p>
+                    <button
+                      onClick={() => setTweetData(prev => ({ ...prev, profileImage: null }))}
+                      className="text-xs text-red-500 hover:text-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            {tweetData.profileImage && (
-              <button
-                onClick={() => setTweetData(prev => ({ ...prev, profileImage: null }))}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 text-sm font-medium ${
-                  isDark 
-                    ? 'bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30' 
-                    : 'bg-red-100 hover:bg-red-200 text-red-700 border border-red-300'
+            ) : (
+              <div 
+                className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
+                  dragActive && dragType === 'profile'
+                    ? (isDark ? 'border-blue-500 bg-blue-500/10' : 'border-blue-500 bg-blue-50')
+                    : (isDark ? 'border-gray-600 hover:border-gray-500 bg-gray-800' : 'border-gray-300 hover:border-gray-400 bg-gray-50')
                 }`}
+                onDragEnter={(e) => handleDrag(e, 'profile')}
+                onDragLeave={(e) => handleDrag(e, 'profile')}
+                onDragOver={(e) => handleDrag(e, 'profile')}
+                onDrop={(e) => handleDrop(e, 'profile')}
+                onClick={() => fileInputRef.current?.click()}
               >
-                Remove Photo
-              </button>
+                <Upload className={`w-6 h-6 mx-auto mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Upload profile photo</p>
+                <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Click or drag & drop</p>
+              </div>
             )}
-            
             <input
               ref={fileInputRef}
               type="file"
@@ -133,150 +118,90 @@ function TweetEditor({ tweetData, setTweetData, onDownload }) {
               className="hidden"
             />
           </div>
-        </div>
-        
-        {/* Timestamp Format Section */}
-        <div className="space-y-4">
-          <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold mb-3`}>Timestamp Format</label>
+
+          {/* User Information */}
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setTweetData(prev => ({ ...prev, timestampFormat: 'relative' }))}
-                className={`px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium ${
-                  tweetData.timestampFormat === 'relative'
-                    ? (isDark ? 'bg-gray-600 text-white shadow-lg' : 'bg-black text-white shadow-lg')
-                    : (isDark ? 'bg-black/50 hover:bg-black text-white border border-gray-600' : 'bg-white hover:bg-white/80 text-black border border-gray-300')
-                }`}
-              >
-                Relative (e.g., "2h")
-              </button>
-              <button
-                onClick={() => setTweetData(prev => ({ ...prev, timestampFormat: 'exact' }))}
-                className={`px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium ${
-                  tweetData.timestampFormat === 'exact'
-                    ? (isDark ? 'bg-gray-600 text-white shadow-lg' : 'bg-black text-white shadow-lg')
-                    : (isDark ? 'bg-black/50 hover:bg-black text-white border border-gray-600' : 'bg-white hover:bg-white/80 text-black border border-gray-300')
-                }`}
-              >
-                Exact (e.g., "12:34 PM")
-              </button>
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                Display Name
+              </label>
+              <input
+                type="text"
+                value={tweetData.displayName}
+                onChange={(e) => setTweetData(prev => ({ ...prev, displayName: e.target.value }))}
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="Your Name"
+              />
             </div>
-            
-            {tweetData.timestampFormat === 'relative' ? (
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                Username
+              </label>
               <input
                 type="text"
-                value={tweetData.customRelativeTime}
-                onChange={(e) => setTweetData(prev => ({ ...prev, customRelativeTime: e.target.value }))}
-                className={`w-full sm:w-48 ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-                placeholder="e.g., 2h, 1d, 3w"
+                value={tweetData.handle || '@username'}
+                onChange={(e) => setTweetData(prev => ({ ...prev, handle: e.target.value }))}
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="@username"
               />
-            ) : (
-              <input
-                type="text"
-                value={tweetData.customExactTime}
-                onChange={(e) => setTweetData(prev => ({ ...prev, customExactTime: e.target.value }))}
-                className={`w-full sm:w-48 ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-                placeholder="e.g., 12:34 PM"
-              />
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Verification Badge Section */}
-        <div className="space-y-4">
-          <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold mb-3`}>Verification Badge</label>
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => setTweetData(prev => ({ ...prev, verificationBadge: null }))}
-              className={`px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium ${
-                !tweetData.verificationBadge
-                  ? (isDark ? 'bg-gray-600 text-white shadow-lg' : 'bg-black text-white shadow-lg')
-                  : (isDark ? 'bg-black/50 hover:bg-black text-white border border-gray-600' : 'bg-white hover:bg-white/80 text-black border border-gray-300')
-              }`}
-            >
-              None
-            </button>
-            <button
-              onClick={() => setTweetData(prev => ({ ...prev, verificationBadge: 'blue' }))}
-              className={`px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium flex items-center gap-2 ${
-                tweetData.verificationBadge === 'blue'
-                  ? (isDark ? 'bg-gray-600 text-white shadow-lg' : 'bg-black text-white shadow-lg')
-                  : (isDark ? 'bg-black/50 hover:bg-black text-white border border-gray-600' : 'bg-white hover:bg-white/80 text-black border border-gray-300')
-              }`}
-            >
-              Blue Checkmark
-            </button>
-            <button
-              onClick={() => setTweetData(prev => ({ ...prev, verificationBadge: 'gold' }))}
-              className={`px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium flex items-center gap-2 ${
-                tweetData.verificationBadge === 'gold'
-                  ? (isDark ? 'bg-gray-600 text-white shadow-lg' : 'bg-black text-white shadow-lg')
-                  : (isDark ? 'bg-black/50 hover:bg-black text-white border border-gray-600' : 'bg-white hover:bg-white/80 text-black border border-gray-300')
-              }`}
-            >
-              Verify Badge
-            </button>
-          </div>
+        {/* Tweet Content */}
+        <div>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+            Tweet Content
+          </label>
+          <textarea
+            value={tweetData.content}
+            onChange={(e) => setTweetData(prev => ({ ...prev, content: e.target.value }))}
+            rows={4}
+            className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none`}
+            placeholder="What's happening?"
+          />
         </div>
 
-        {/* Media Upload Section */}
-        <div className="space-y-4">
-          <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold mb-3`}>Media (Image/Video)</label>
-          
-          {/* Media Preview */}
-          {tweetData.media && (
-            <div className={`relative rounded-xl overflow-hidden border-2 ${isDark ? 'border-gray-500/50' : 'border-gray-400/30'} shadow-lg`}>
+        {/* Media Upload */}
+        <div>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+            Media
+          </label>
+          {tweetData.media ? (
+            <div className={`relative rounded-lg overflow-hidden border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
               {tweetData.mediaType === 'video' ? (
-                <video src={tweetData.media} className="w-full h-48 object-cover" controls />
+                <video src={tweetData.media} className="w-full h-40 object-cover" controls />
               ) : (
-                <img src={tweetData.media} alt="Tweet media" className="w-full h-48 object-cover" />
+                <img src={tweetData.media} alt="Tweet media" className="w-full h-40 object-cover" />
               )}
               <button
                 onClick={() => setTweetData(prev => ({ ...prev, media: null, mediaType: null }))}
-                className={`absolute top-2 right-2 p-2 rounded-full transition-all duration-300 ${
-                  isDark 
-                    ? 'bg-red-600/80 hover:bg-red-600 text-white' 
-                    : 'bg-red-500/80 hover:bg-red-500 text-white'
-                } backdrop-blur-sm`}
+                className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600"
               >
                 ×
               </button>
             </div>
-          )}
-          
-          {/* Drag and Drop Area */}
-          <div 
-            className={`min-h-[140px] border-2 border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer ${
-              dragActive && dragType === 'media'
-                ? (isDark ? 'border-gray-400 bg-gray-400/10' : 'border-gray-600 bg-gray-600/10')
-                : (isDark ? 'border-gray-600 hover:border-gray-400 bg-black/30' : 'border-gray-300/50 hover:border-gray-600 bg-white/50')
-            }`}
-            onDragEnter={(e) => handleDrag(e, 'media')}
-            onDragLeave={(e) => handleDrag(e, 'media')}
-            onDragOver={(e) => handleDrag(e, 'media')}
-            onDrop={(e) => handleDrop(e, 'media')}
-            onClick={() => mediaInputRef.current?.click()}
-          >
-            <div className="flex flex-col items-center justify-center text-center space-y-4">
-              <div className="flex gap-3">
-                <div className={`p-3 rounded-full ${isDark ? 'bg-black' : 'bg-white border border-gray-300'}`}>
-                  <ImageIcon className={`w-6 h-6 ${isDark ? 'text-white' : 'text-black'}`} />
-                </div>
-                <div className={`p-3 rounded-full ${isDark ? 'bg-black' : 'bg-white border border-gray-300'}`}>
-                  <Video className={`w-6 h-6 ${isDark ? 'text-white' : 'text-black'}`} />
-                </div>
+          ) : (
+            <div 
+              className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
+                dragActive && dragType === 'media'
+                  ? (isDark ? 'border-blue-500 bg-blue-500/10' : 'border-blue-500 bg-blue-50')
+                  : (isDark ? 'border-gray-600 hover:border-gray-500 bg-gray-800' : 'border-gray-300 hover:border-gray-400 bg-gray-50')
+              }`}
+              onDragEnter={(e) => handleDrag(e, 'media')}
+              onDragLeave={(e) => handleDrag(e, 'media')}
+              onDragOver={(e) => handleDrag(e, 'media')}
+              onDrop={(e) => handleDrop(e, 'media')}
+              onClick={() => mediaInputRef.current?.click()}
+            >
+              <div className="flex justify-center gap-2 mb-2">
+                <ImageIcon className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                <Video className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
               </div>
-              <div>
-                <p className={`${isDark ? 'text-white' : 'text-black'} font-medium`}>
-                  Drop your media here
-                </p>
-                <p className={`${isDark ? 'text-white/60' : 'text-black/60'} text-sm mt-1`}>
-                  Support images and videos • Click to browse
-                </p>
-              </div>
+              <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Upload media</p>
+              <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Images & Videos</p>
             </div>
-          </div>
-          
+          )}
           <input
             ref={mediaInputRef}
             type="file"
@@ -286,98 +211,205 @@ function TweetEditor({ tweetData, setTweetData, onDownload }) {
           />
         </div>
 
-        {/* User Info Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold`}>Display Name</label>
-            <input
-              type="text"
-              value={tweetData.displayName}
-              onChange={(e) => setTweetData(prev => ({ ...prev, displayName: e.target.value }))}
-              className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-              placeholder="Your Name"
-            />
+        {/* Settings Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Timestamp */}
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+              Timestamp
+            </label>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <button
+                onClick={() => setTweetData(prev => ({ ...prev, timestampFormat: 'relative' }))}
+                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  tweetData.timestampFormat === 'relative'
+                    ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                    : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+                }`}
+              >
+                Relative
+              </button>
+              <button
+                onClick={() => setTweetData(prev => ({ ...prev, timestampFormat: 'exact' }))}
+                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  tweetData.timestampFormat === 'exact'
+                    ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                    : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+                }`}
+              >
+                Exact
+              </button>
+            </div>
+            {tweetData.timestampFormat === 'relative' ? (
+              <input
+                type="text"
+                value={tweetData.customRelativeTime}
+                onChange={(e) => setTweetData(prev => ({ ...prev, customRelativeTime: e.target.value }))}
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="2h, 1d, 3w"
+              />
+            ) : (
+              <input
+                type="text"
+                value={tweetData.customExactTime}
+                onChange={(e) => setTweetData(prev => ({ ...prev, customExactTime: e.target.value }))}
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="12:34 PM"
+              />
+            )}
           </div>
-          <div className="space-y-2">
-            <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold`}>Username</label>
-            <input
-              type="text"
-              value={tweetData.handle || '@username'}
-              onChange={(e) => setTweetData(prev => ({ ...prev, handle: e.target.value }))}
-              className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-              placeholder="@username"
-            />
+
+          {/* Verification Badge */}
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+              Verification
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setTweetData(prev => ({ ...prev, verificationBadge: null }))}
+                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  !tweetData.verificationBadge
+                    ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                    : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+                }`}
+              >
+                None
+              </button>
+              <button
+                onClick={() => setTweetData(prev => ({ ...prev, verificationBadge: 'blue' }))}
+                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  tweetData.verificationBadge === 'blue'
+                    ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                    : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+                }`}
+              >
+                Blue
+              </button>
+              <button
+                onClick={() => setTweetData(prev => ({ ...prev, verificationBadge: 'gold' }))}
+                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  tweetData.verificationBadge === 'gold'
+                    ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                    : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+                }`}
+              >
+                Gold
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Tweet Content */}
-        <div className="space-y-2">
-          <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold`}>Tweet Content</label>
-          <textarea
-            value={tweetData.content}
-            onChange={(e) => setTweetData(prev => ({ ...prev, content: e.target.value }))}
-            rows={4}
-            className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 resize-none transition-all duration-300 text-sm shadow-sm`}
-            placeholder="What's happening?"
-          />
+        {/* Tweet Theme */}
+        <div>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+            Tweet Theme
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => {
+                setTweetTheme('system')
+                onThemeChange?.('system')
+              }}
+              className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                tweetTheme === 'system'
+                  ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                  : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+              }`}
+            >
+              System
+            </button>
+            <button
+              onClick={() => {
+                setTweetTheme('light')
+                onThemeChange?.('light')
+              }}
+              className={`px-3 py-2 text-sm rounded-lg border transition-colors flex items-center justify-center gap-1 ${
+                tweetTheme === 'light'
+                  ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                  : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+              }`}
+            >
+              <Sun className="w-4 h-4" />
+              Light
+            </button>
+            <button
+              onClick={() => {
+                setTweetTheme('dark')
+                onThemeChange?.('dark')
+              }}
+              className={`px-3 py-2 text-sm rounded-lg border transition-colors flex items-center justify-center gap-1 ${
+                tweetTheme === 'dark'
+                  ? (isDark ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-500 text-white border-blue-500')
+                  : (isDark ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50')
+              }`}
+            >
+              <Moon className="w-4 h-4" />
+              Dark
+            </button>
+          </div>
         </div>
 
         {/* Engagement Metrics */}
-        <div className="space-y-4">
-          <label className={`block ${isDark ? 'text-white' : 'text-black'} text-sm font-semibold`}>Engagement Metrics</label>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <label className={`block ${isDark ? 'text-white/80' : 'text-black/80'} text-xs font-medium`}>❤️ Likes</label>
+        <div>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+            Engagement Metrics
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+              <label className={`block text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Likes</label>
               <input
                 type="text"
                 value={tweetData.likes}
                 onChange={(e) => setTweetData(prev => ({ ...prev, likes: e.target.value }))}
-                className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-                placeholder="42 or 4.2k"
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="42"
               />
             </div>
-            <div className="space-y-2">
-              <label className={`block ${isDark ? 'text-white/80' : 'text-black/80'} text-xs font-medium`}>🔄 Retweets</label>
+            <div>
+              <label className={`block text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Retweets</label>
               <input
                 type="text"
                 value={tweetData.retweets}
                 onChange={(e) => setTweetData(prev => ({ ...prev, retweets: e.target.value }))}
-                className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-                placeholder="12 or 1.2k"
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="12"
               />
             </div>
-            <div className="space-y-2">
-              <label className={`block ${isDark ? 'text-white/80' : 'text-black/80'} text-xs font-medium`}>💬 Comments</label>
+            <div>
+              <label className={`block text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Comments</label>
               <input
                 type="text"
                 value={tweetData.comments}
                 onChange={(e) => setTweetData(prev => ({ ...prev, comments: e.target.value }))}
-                className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-                placeholder="8 or 800"
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="8"
               />
             </div>
-            <div className="space-y-2">
-              <label className={`block ${isDark ? 'text-white/80' : 'text-black/80'} text-xs font-medium`}>👁️ Views</label>
+            <div>
+              <label className={`block text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Views</label>
               <input
                 type="text"
                 value={tweetData.views}
                 onChange={(e) => setTweetData(prev => ({ ...prev, views: e.target.value }))}
-                className={`w-full ${isDark ? 'bg-black/50 border-gray-600 text-white placeholder-white/60' : 'bg-white border-gray-300 text-black placeholder-black/60'} border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 transition-all duration-300 text-sm shadow-sm`}
-                placeholder="1.2k or 1.2M"
+                className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="1.2k"
               />
             </div>
           </div>
         </div>
+
         {/* Download Button */}
-        <div className={`pt-4 border-t ${isDark ? 'border-gray-600/20' : 'border-gray-400/20'}`}>
-          <button
-            onClick={onDownload}
-            className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg ${isDark ? 'bg-gradient-to-r from-gray-700 to-black hover:from-gray-600 hover:to-gray-900' : 'bg-gradient-to-r from-gray-400 to-gray-700 hover:from-gray-300 hover:to-gray-600'}`}
-          >
-            <Download className="w-5 h-5" />
-            <span>Download Tweet Image</span>
-          </button>
-        </div>
+        <button
+          onClick={() => onDownload(tweetTheme)}
+          className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+            isDark 
+              ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800' 
+              : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'
+          }`}
+        >
+          <Download className="w-5 h-5" />
+          Download Tweet
+        </button>
       </div>
     </div>
   )

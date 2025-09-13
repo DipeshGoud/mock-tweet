@@ -1,16 +1,22 @@
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 import { Heart, MessageCircle, Repeat2, Share, BarChart3, Bookmark, MoreHorizontal } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import bluetickIcon from '../../assets/bluetick.png'
 import verifiedBadgeIcon from '../../assets/twitter-verified-badge-gray-seeklogo.png'
 
-const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet }, ref) => {
-  const { isDark } = useTheme()
+const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet, forcedTheme = 'system' }, ref) => {
+  const { isDark: systemIsDark } = useTheme()
+  
+  // Determine the actual theme to use based on forcedTheme
+  const isDark = useMemo(() => {
+    if (forcedTheme === 'system') return systemIsDark;
+    return forcedTheme === 'dark';
+  }, [forcedTheme, systemIsDark])
 
   return (
     <div 
       ref={ref}
-      className={`${isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'} border rounded-2xl p-6 transition-colors duration-300 w-full max-w-[680px] mx-auto`}
+      className={`${isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'} border rounded-2xl p-6 transition-colors duration-300 w-full max-w-[680px] mx-auto shadow-md`}
     >
       {/* Header */}
       <div className="flex items-start">
@@ -68,14 +74,14 @@ const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet }
             {tweetData.content.split(' ').map((word, index) => {
               if (word.startsWith('#')) {
                 return (
-                  <span key={index} className={`${isDark ? 'text-gray-300' : 'text-gray-600'} hover:underline cursor-pointer`}>
+                  <span key={index} className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} hover:underline cursor-pointer font-medium`}>
                     {word}{' '}
                   </span>
                 )
               }
               if (word.startsWith('@')) {
                 return (
-                  <span key={index} className={`${isDark ? 'text-gray-300' : 'text-gray-600'} hover:underline cursor-pointer`}>
+                  <span key={index} className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} hover:underline cursor-pointer font-medium`}>
                     {word}{' '}
                   </span>
                 )
@@ -108,13 +114,13 @@ const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet }
           )}
           
           {/* Engagement Metrics */}
-          <div className={`flex justify-between items-center mt-3 ${isDark ? 'text-white/70' : 'text-black/70'} text-xs sm:text-sm`}>
+          <div className={`flex justify-between items-center mt-3 ${isDark ? 'text-white/80' : 'text-black/80'} text-xs sm:text-sm`}>
             {/* Comments */}
             <div className="flex items-center group cursor-pointer">
-              <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-gray-400/20' : 'group-hover:bg-gray-600/10'}`}>
-                <MessageCircle className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600'}`} />
+              <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-blue-900/30' : 'group-hover:bg-blue-100'}`}>
+                <MessageCircle className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/80 group-hover:text-blue-300' : 'text-black/80 group-hover:text-blue-700'}`} />
               </div>
-              <span className={`text-xs sm:text-sm transition-colors ${isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600'}`}>
+              <span className={`text-xs sm:text-sm transition-colors ${isDark ? 'text-white/80 group-hover:text-blue-300' : 'text-black/80 group-hover:text-blue-700'}`}>
                 {tweetData.comments}
               </span>
             </div>
@@ -124,17 +130,17 @@ const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet }
               className="flex items-center group cursor-pointer"
               onClick={onRetweet}
             >
-              <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-gray-400/20' : 'group-hover:bg-gray-600/10'}`}>
+              <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-green-900/30' : 'group-hover:bg-green-100'}`}>
                 <Repeat2 className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${
                   retweeted 
-                    ? (isDark ? 'text-gray-300' : 'text-gray-600')
-                  : (isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600')
+                    ? (isDark ? 'text-green-400' : 'text-green-600')
+                  : (isDark ? 'text-white/80 group-hover:text-green-400' : 'text-black/80 group-hover:text-green-600')
                 }`} />
               </div>
               <span className={`text-xs sm:text-sm transition-colors ${
                 retweeted 
-                  ? (isDark ? 'text-gray-300' : 'text-gray-600')
-                  : (isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600')
+                  ? (isDark ? 'text-green-400' : 'text-green-600')
+                  : (isDark ? 'text-white/80 group-hover:text-green-400' : 'text-black/80 group-hover:text-green-600')
               }`}>
                 {tweetData.retweets}
               </span>
@@ -163,10 +169,10 @@ const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet }
             
             {/* Views */}
             <div className="flex items-center group cursor-pointer">
-              <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-gray-400/20' : 'group-hover:bg-gray-600/10'}`}>
-                <BarChart3 className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600'}`} />
+              <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-purple-900/30' : 'group-hover:bg-purple-100'}`}>
+                <BarChart3 className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/80 group-hover:text-purple-300' : 'text-black/80 group-hover:text-purple-700'}`} />
               </div>
-              <span className={`text-xs sm:text-sm transition-colors ${isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600'}`}>
+              <span className={`text-xs sm:text-sm transition-colors ${isDark ? 'text-white/80 group-hover:text-purple-300' : 'text-black/80 group-hover:text-purple-700'}`}>
                 {tweetData.views}
               </span>
             </div>
@@ -175,15 +181,15 @@ const TweetCard = forwardRef(({ tweetData, liked, retweeted, onLike, onRetweet }
             <div className="flex items-center gap-1">
               {/* Bookmark */}
               <div className="flex items-center group cursor-pointer">
-                <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-gray-400/20' : 'group-hover:bg-gray-600/10'}`}>
-                  <Bookmark className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600'}`} />
+                <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-amber-900/30' : 'group-hover:bg-amber-100'}`}>
+                  <Bookmark className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/80 group-hover:text-amber-300' : 'text-black/80 group-hover:text-amber-700'}`} />
                 </div>
               </div>
               
               {/* Share */}
               <div className="flex items-center group cursor-pointer">
-                <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-gray-400/20' : 'group-hover:bg-gray-600/10'}`}>
-                  <Share className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/70 group-hover:text-gray-300' : 'text-black/70 group-hover:text-gray-600'}`} />
+                <div className={`p-1 sm:p-1.5 rounded-full transition-colors ${isDark ? 'group-hover:bg-cyan-900/30' : 'group-hover:bg-cyan-100'}`}>
+                  <Share className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isDark ? 'text-white/80 group-hover:text-cyan-300' : 'text-black/80 group-hover:text-cyan-700'}`} />
                 </div>
               </div>
             </div>
