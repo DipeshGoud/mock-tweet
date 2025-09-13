@@ -27,6 +27,7 @@ src/
 │   │   ├── TweetEditor.jsx        # Tweet customization form
 │   │   └── TweetGenerator.jsx     # Main tweet generator component
 │   └── ui/
+│       ├── Footer.jsx             # Footer component
 │       └── ThemeToggle.jsx        # Dark/light mode toggle
 ├── contexts/
 │   └── ThemeContext.jsx           # Theme state management
@@ -100,6 +101,7 @@ src/
 - **TweetCard**: Displays the formatted tweet with all visual elements
 - **TweetEditor**: Provides the form interface for customizing tweet properties
 - **ThemeToggle**: Handles theme switching functionality
+- **Footer**: Displays the application's footer with copyright and links
 
 ### Custom Hooks
 
